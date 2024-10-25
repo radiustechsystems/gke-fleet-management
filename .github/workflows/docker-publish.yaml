@@ -30,8 +30,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
-          context: .
-          file: fleet-argocd-plugin/Dockerfile
+          context: fleet-argocd-plugin
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/fleet-argocd-sync:${{ github.sha }}
