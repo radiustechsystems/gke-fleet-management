@@ -1,0 +1,38 @@
+# .github/workflows/docker-publish.yml
+name: Build and Publish Docker Image
+
+on:
+  push:
+    branches:
+      - main  # Change this to your default branch if different
+
+permissions:
+  packages: write  # Grant permission to write to packages (GHCR)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: fleet-argocd-plugin/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/fleet-argocd-sync:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/fleet-argocd-sync:latest
